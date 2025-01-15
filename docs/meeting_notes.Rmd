@@ -1,0 +1,44 @@
+---
+title: "Monthly meeting notes"
+author: "Sunny Tseng"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### 2025 Jan. 15
+
+Time/location: 8 am (Vancouver) - 5 pm (Chemnitz), on zoom
+
+Who attended: Stefan, Felix, Sunny
+
+#### Accommodation
+
+-   Time period needs accommodation: mid-May to late July
+
+-   There is a council meeting in Cornell on May 15, 16 that Sunny could consider attending and fly to Europe after that
+
+-   Stefan will contact Benny Liebold from the international office to seek for resources and get Sunny on-board ([link](https://www.tu-chemnitz.de/international/forschende/index.php.en))
+
+-   Accommodation searching criteria: furnished, locaiton doesn't matter too much, \~ 500 euro would be good
+
+#### Project
+
+-   The primary focus of the visiting scholar is the R package development
+
+-   Question: What do ecologists expect the R package to do (i.e., functionality to be included in the R package)?
+
+-   Question: When to publish the R package on CRAN? Now the package is still unstable as it's closely linked to the Python package, and can be easily broken if the python package is changing. But it's possible to do it before May even if it's still not perfect.
+
+#### To do
+
+-   Send invitation to the next meeting (Feb.20 8 am Vancouver time)
+
+-   Check the current status of BirdNET R package, understand the functionality that it currently provides
+
+-   Summarize the current workflow that ecologists use for acoustic data (based on my experience, my publication, and the literature review)
+
+-   Design a survey to reach out ecologists who wants to use BirdNET R package and their expectations
