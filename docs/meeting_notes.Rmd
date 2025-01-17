@@ -35,10 +35,50 @@ Who attended: Stefan, Felix, Sunny
 
 #### To do
 
--   Send invitation to the next meeting (Feb.20 8 am Vancouver time)
+-   Action: Send invitation to the next meeting (Feb.20 8 am Vancouver time)
 
 -   Check the current status of BirdNET R package, understand the functionality that it currently provides
 
 -   Summarize the current workflow that ecologists use for acoustic data (based on my experience, my publication, and the literature review)
 
 -   Design a survey to reach out ecologists who wants to use BirdNET R package and their expectations
+
+#### Summarized information
+
+##### Workflow that ecologists usually use? What kind of functionality that birdnetR package should provide?
+
+A general workflow that ecologists often use for acoustic data is well summarized in this review paper in 2019: [Emerging opportunities and challenges for passive acoustics in ecological assessment and monitoring](https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/2041-210X.13101). BirdNET is making a significant contribution from stage (d) to (e).
+
+![](images/clipboard-1808135285.png)
+
+From my experience in [studying owl calls using BirdNET](https://ace-eco.org/vol19/iss1/art23/) (and from the chat with other ecologists), here are the core functionality that would be the most useful to have in the R package:
+
+-   birdnet_single_file()
+
+-   birdnet_multiple_files()
+
+-   birdnet_train()
+
+To further check how to go from stage (d) to (e), I have a paper that is currently under review, demonstrating how to validate BirdNET detections to get confidence thresholds. Based on the workflow proposed in that paper, here are other useful functions:
+
+-   birdnet_species()
+
+```{=html}
+<!-- -->
+```
+-   birdnet_segments()
+
+-   birdnet_validation_shiny()
+
+-   ...
+
+##### Wrap around the BirdNET Analyzer python code instead of the python package?
+
+1.  How about simply wrap around the BirdNET Analyzer instead of the python pacakge?
+    -   to enhance the indepandency (to reduce the complexity of the structure)
+
+    -   avoid the troubles of using `reticulate` package, which can be causing issues during the CRAN review
+
+    -   already have successful example runing BirdNET using R ([NSNSDAcoustics](https://github.com/nationalparkservice/NSNSDAcoustics), [Elas's script](https://github.com/eliasb03/teamshrub_bowman_honours/blob/main/scripts/aru_analysis/01_birdNET_functions_v2.R))
+
+    -   Maybe I missed the advantages of wrapping the python package using R? More robust? I have few expereince with Python (took one course long time before), but I have experience with the GUI, the python code following the instructions
