@@ -1,5 +1,5 @@
 ---
-title: "Monthly meeting notes"
+title: "Meeting notes/discussion"
 author: "Sunny Tseng"
 date: "`r Sys.Date()`"
 output: html_document
@@ -9,7 +9,7 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-### 2025 Jan. 15
+### 2025 Jan. 15 - Meeting
 
 Time/location: 8 am (Vancouver) - 5 pm (Chemnitz), on zoom
 
@@ -43,31 +43,54 @@ Who attended: Stefan, Felix, Sunny
 
 -   Design a survey to reach out ecologists who wants to use BirdNET R package and their expectations
 
-#### Workflow that ecologists usually use? What kind of functionality that birdnetR package can provide?
+### 2025 Jan. 20 - Discussion
 
-A general workflow that ecologists often use for acoustic data is well summarized in this review paper in 2019: [Emerging opportunities and challenges for passive acoustics in ecological assessment and monitoring](https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/2041-210X.13101). BirdNET is making a significant contribution from stage (d) to (e).
+#### Workflow commonly used by ecologists for acoustic data analysis & proposed functions for `birdnetR` package
+
+Ecologists often follow a structured workflow for processing and analyzing acoustic data. This workflow is well summarized in the 2019 review paper *"[Emerging Opportunities and Challenges for Passive Acoustics in Ecological Assessment and Monitoring](https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/2041-210X.13101)"*. BirdNET has been transformative in facilitating the transition from stage **(c) Audio data** to stage **(e) species detection record**:
 
 ![](images/clipboard-1808135285.png)
 
-From my experience in [studying owl calls using BirdNET](https://ace-eco.org/vol19/iss1/art23/) (and from the chat with other ecologists), here are the core functionality that would be the most useful to have in the R package:
+Based on my experience [studying owl calls using BirdNET](https://ace-eco.org/vol19/iss1/art23/) and discussions with other ecologists, the following core functionalities would be the most valuable for integration into the R package:
 
--   birdnet_analyze(): single file or multiple file
+1.  **`birdnet_analyze(i, o, min_conf, ...)`**: Auido analysis, specifies input audio files (`i`) and output paths (`o`) for storing detection results. Mirrors the arguments used in the command-line interface (CLI) section for `analyzer.py`.
 
--   birdnet_train()
+2.  **`birdnet_train(i, o, ...)`**: Custom model training, enables users to specify training audio files (`i`) and output paths (`o`) for generating customized models. Mirrors the arguments used in `train.py`, facilitating model fine-tuning for specific research needs.
 
-To further check how to go from stage (d) to (e), I have a paper that is currently under review, demonstrating how to validate BirdNET detections to get confidence thresholds. Based on the workflow proposed in that paper, here are other useful functions:
+To validate/visualize the detection output from BirdNET, the following functionality will be useful. These are inspired by Wood & Kahl (2024) and by the workflow in my paper (currently under review), which focuses on validating BirdNET detections for setting confidence thresholds:
 
--   birdnet_species()
--   birdnet_segments()
--   birdnet_validation_shiny()
--   ...
+1.  **`birdnet_species(...)`**: species information, retrieves a list of species given latitude and longitude.
 
-#### Make the R package to wrap BirdNET Analyzer python code instead of the python package?
+2.  **`birdnet_segments(...)`**: randomly selects segments from detection outputs for validation purposes.
 
-Maybe I missed the advantages of wrapping the python package using R? The benefit of wrapping directly the python code would are:
+3.  **`birdnet_validation_shiny()`**: interactive validation interface. Provides a Shiny-based interface for visual and audio validation of BirdNET outputs. This interface has been successfully used by many of my colleagues, and I’d be happy to demonstrate it during our next meeting!
 
--   to enhance the indepandency (to reduce the complexity of the structure)
+4.  **`birdnet_visualization()`**: generates visualizations of detection distributions across time or space.
 
--   avoid the troubles of using `reticulate` package, which can be causing issues during the CRAN review, virtual environment, etc.
+5.  ...
 
--   already have successful example runing BirdNET using R ([NSNSDAcoustics](https://github.com/nationalparkservice/NSNSDAcoustics), [Elas's script](https://github.com/eliasb03/teamshrub_bowman_honours/blob/main/scripts/aru_analysis/01_birdNET_functions_v2.R)). And we simply needs to make it into a stable package.
+#### Approaches for developing the `birdnetR` package
+
+I have been exploring the structure of the BirdNET Analyzer project on GitHub, including its Python codebase, Python package, GUI, and other components (such a huge project!). My previous experience includes running BirdNET through the CLI on a Windows system (following the section 6.4. instructions) and the BirdNET GUI. After the reading, I have some questions in terms of different approaches in terms of developing an R package for BirdNET algorithm:
+
+1.  An R package to send CLI commend to BirdNET?
+
+    The R package would construct and execute CLI commands for BirdNET. Users would need to install the BirdNET Analyzer executable (`BirdNET-Analyzer-setup.exe`) beforehand. I made this toy R function [`birdnet_analyze()`](https://github.com/SunnyTseng/Ch6_birdnet_r_package_collaborator/blob/main/R/Ch6_run_BirdNET_in_R.R) for demonstration. This function could take arguments such as `i` (input file) and `o` (output path) to process audio files via BirdNET CLI. Similarly, a `birdnet_train()` function could be developed using the same approach.
+
+    This approach is very straightforward (for me, as an ecologist who use R heavily), without python dependencies. Other R packages, such as one by the [US National Parks Service](https://github.com/nationalparkservice/NSNSDAcoustics?tab=readme-ov-file#running-birdnet-from-rstudio), have successfully employed this method. Maybe I missed something and things are more complicated under the hood. Can you remind me what might be disadvantage/limitation of this method?
+
+2.  An R package to wrap around Python scripts (not the Python package)
+
+    The R package would directly execute Python scripts from BirdNET, such as `analyzer.py`, `embeddings.py`, and `train.py`. This would require users to install BirdNET and Python but avoids depending on the BirdNET Python package itself. This approach could avoids direct dependence on the BirdNET Python package, reducing the risks if the Python package changes, and offers more flexibility than the CLI approach.
+
+3.  An R package to wrap around the python package
+
+    The R package would use `reticulate` to interact directly with the BirdNET Python package. This is the approach we are currently using. While this approach provides the most comprehensive functionality, it also introduces significant complexity in terms of setup and compatibility. It requires users to install Python and manage its environment, and there might be compatibility issues between R, `reticulate`, and the BirdNET Python package.
+
+    PS. I tested the current version of `birdnetR` this morning, both locally and on Posit Cloud. Unfortunately, I encountered errors in both environments and could not get the package to work:
+
+    ![](images/clipboard-2913807267.png)
+
+-   **Which approach aligns best with our goals?** Should we prioritize ease of use for ecologists (CLI) or maximize functionality (Python package)?
+
+-   **Can the CLI method (or the Python scripts method) provide the core functionality?** If the the core functionality can be provided using simpler approaches, we can always develop other functions easily using R.
