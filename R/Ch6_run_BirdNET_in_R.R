@@ -1,5 +1,3 @@
-
-
 # Download and install BirdNET-Analyzer-setup.exe from BirdNET Analyzer GitHub 
 
 # define the function -----------------------------------------------------
